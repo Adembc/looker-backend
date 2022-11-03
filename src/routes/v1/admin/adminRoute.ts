@@ -11,6 +11,7 @@ import adminSchema from "../validationSchema/adminSchema";
 import SchemaValidator, {
   ValidationSource,
 } from "../../../middleware/SchemaValidator";
+import { idSchema } from "../validationSchema/commonSchema";
 
 const router = Router();
 // router.use(protect);
@@ -20,14 +21,11 @@ router
   .post(SchemaValidator(adminSchema.createUserAdmin), createAdmin);
 router
   .route("/:id")
-  .get(SchemaValidator(adminSchema.adminById, ValidationSource.PARAM), getAdmin)
+  .get(SchemaValidator(idSchema, ValidationSource.PARAM), getAdmin)
   .put(
-    SchemaValidator(adminSchema.adminById, ValidationSource.PARAM),
+    SchemaValidator(idSchema, ValidationSource.PARAM),
     SchemaValidator(adminSchema.putAdmin),
     updateAdmin
   )
-  .delete(
-    SchemaValidator(adminSchema.adminById, ValidationSource.PARAM),
-    deleteAdmin
-  );
+  .delete(SchemaValidator(idSchema, ValidationSource.PARAM), deleteAdmin);
 export default router;

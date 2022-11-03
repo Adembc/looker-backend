@@ -33,7 +33,7 @@ export const createProduct: RequestHandler = catchAsync(
     } as IProduct);
     const product = {
       _id: doc._id,
-      firstName: doc.name,
+      name: doc.name,
       img: doc?.img,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

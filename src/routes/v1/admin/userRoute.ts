@@ -11,6 +11,7 @@ import SchemaValidator, {
   ValidationSource,
 } from "../../../middleware/SchemaValidator";
 import uploadMedia from "../../../middleware/uploadMedia";
+import { idSchema } from "../validationSchema/commonSchema";
 import userSchema from "../validationSchema/userSchema";
 
 const router = Router();
@@ -32,15 +33,12 @@ router
 
 router
   .route("/:id")
-  .get(SchemaValidator(userSchema.userById, ValidationSource.PARAM), getUser)
+  .get(SchemaValidator(idSchema, ValidationSource.PARAM), getUser)
   .put(
     uploadMedia("users", "avatar"),
-    SchemaValidator(userSchema.userById, ValidationSource.PARAM),
+    SchemaValidator(idSchema, ValidationSource.PARAM),
     SchemaValidator(userSchema.putUser),
     updateUser
   )
-  .delete(
-    SchemaValidator(userSchema.userById, ValidationSource.PARAM),
-    deleteUser
-  );
+  .delete(SchemaValidator(idSchema, ValidationSource.PARAM), deleteUser);
 export default router;

@@ -1,20 +1,20 @@
 import { Router } from "express";
 import { protect } from "../../../controllers/v1/authAdminController";
 import {
-  getProducts,
-  createProduct,
-  deleteProduct,
-  updateProduct,
-} from "../../../controllers/v1/productController";
+  createCategory,
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "../../../controllers/v1/categoryController";
 import SchemaValidator, {
   ValidationSource,
 } from "../../../middleware/SchemaValidator";
 import uploadMedia from "../../../middleware/uploadMedia";
 import { idSchema } from "../validationSchema/commonSchema";
 import {
-  createProductSchema,
-  updateProductSchema,
-} from "../validationSchema/productSchema";
+  createCategorySchema,
+  updateCategorySchema,
+} from "../validationSchema/categorySchema";
 
 const router = Router();
 
@@ -22,20 +22,20 @@ const router = Router();
 
 router
   .route("/")
-  .get(getProducts)
+  .get(getCategories)
   .post(
-    uploadMedia("products", "img"),
-    SchemaValidator(createProductSchema),
-    createProduct
+    uploadMedia("categories", "img"),
+    SchemaValidator(createCategorySchema),
+    createCategory
   );
 
 router
   .route("/:id")
   .put(
-    uploadMedia("products", "img"),
+    uploadMedia("categories", "img"),
     SchemaValidator(idSchema, ValidationSource.PARAM),
-    SchemaValidator(updateProductSchema),
-    updateProduct
+    SchemaValidator(updateCategorySchema),
+    updateCategory
   )
-  .delete(SchemaValidator(idSchema, ValidationSource.PARAM), deleteProduct);
+  .delete(SchemaValidator(idSchema, ValidationSource.PARAM), deleteCategory);
 export default router;

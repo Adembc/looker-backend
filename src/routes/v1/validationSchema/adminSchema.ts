@@ -1,8 +1,4 @@
 import Joi from "joi";
-import {
-  checkValidPhone,
-  JoiObjectId,
-} from "../../../middleware/SchemaValidator";
 
 const createAdminValidateSchema = Joi.object({
   password: Joi.string().required(),
@@ -20,10 +16,6 @@ const updateAdminPswValidateSchema = Joi.object({
   currentPassword: Joi.string().required(),
   password: Joi.string().required().min(8),
   passwordConfirm: Joi.ref("password"),
-});
-
-const adminById = Joi.object({
-  id: JoiObjectId().required(),
 });
 
 const loginAdmin = Joi.object({
@@ -53,7 +45,6 @@ export default {
   createUserAdmin: createAdminValidateSchema,
   putAdmin: updateAdminValidateSchema,
   updatePsw: updateAdminPswValidateSchema,
-  adminById,
   loginAdmin,
   adminToken,
   adminCredential,
