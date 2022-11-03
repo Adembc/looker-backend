@@ -17,7 +17,7 @@ const uploadMedia = (folder: string, fieldName: string = "") => {
     },
   });
   const upload = multer({ storage });
-
+  if (!fieldName) return upload.any();
   return upload.single(fieldName);
 };
 export default uploadMedia;
