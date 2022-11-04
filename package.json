@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server.js",
-    "postinstall": "tsc",
+    "build": "tsc",
     "dev": "nodemon dist/server.js",
     "prod": "NODE_ENV=production nodemon dist/server.js",
     "watch-ts": "tsc -w"
