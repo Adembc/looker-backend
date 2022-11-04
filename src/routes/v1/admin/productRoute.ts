@@ -18,7 +18,7 @@ import {
 
 const router = Router();
 
-// router.use(protect);
+router.use(protect);
 
 router
   .route("/")

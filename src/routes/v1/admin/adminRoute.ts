@@ -14,7 +14,7 @@ import SchemaValidator, {
 import { idSchema } from "../validationSchema/commonSchema";
 
 const router = Router();
-// router.use(protect);
+router.use(protect);
 router
   .route("/")
   .get(getAdmins)

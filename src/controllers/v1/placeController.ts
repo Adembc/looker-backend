@@ -113,3 +113,9 @@ export const deletePlace: RequestHandler = catchAsync(
     res.status(204).json({});
   }
 );
+export const suggestPlace: RequestHandler = catchAsync(
+  async (req, res: Response, next: NextFunction) => {
+    const { _id: userId } = req.user;
+    // const { lat, lan, name, catego };
+  }
+);

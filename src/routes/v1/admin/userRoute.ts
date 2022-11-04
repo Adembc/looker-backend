@@ -16,7 +16,7 @@ import userSchema from "../validationSchema/userSchema";
 
 const router = Router();
 
-// router.use(protect);
+router.use(protect);
 
 router
   .route("/")
