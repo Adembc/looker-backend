@@ -9,7 +9,9 @@ import { ImageModel } from "../../database/model/imageModel";
 
 export const getPlaces: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await PlaceRepository.findPlaces(req.query);
+    const data = await PlaceRepository.findPlaces(req.query, {
+      path: "category",
+    });
     res.status(200).json({
       results: data.length,
       payload: {

@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { protect } from "../../../controllers/v1/authController";
 import { getCategories } from "../../../controllers/v1/categoryController";
-import { suggestPlace } from "../../../controllers/v1/placeController";
+import {
+  getPlaces,
+  suggestPlace,
+} from "../../../controllers/v1/placeController";
 
 const router = Router();
 router.use(protect);
 
-router.route("/suggest").post(suggestPlace);
+router.route("/").get(getPlaces);
 export default router;

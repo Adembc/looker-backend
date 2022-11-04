@@ -5,9 +5,9 @@ export const DOCUMENT_NAME = "Place";
 export const COLLECTION_NAME = "places";
 
 export enum STATUS {
-  REJECTED,
-  IN_REVIEW,
-  ACCEPTED,
+  REJECTED = 1,
+  IN_REVIEW = 2,
+  ACCEPTED = 3,
 }
 
 export default interface IPlace extends Document {
@@ -36,7 +36,7 @@ const schema = new Schema(
       default: STATUS.IN_REVIEW,
     },
     addedBy: { type: mongoose.Types.ObjectId, ref: "User" },
-    categroy: {
+    category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
     },

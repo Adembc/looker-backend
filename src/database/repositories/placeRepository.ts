@@ -8,11 +8,12 @@ export default class PlaceRepository {
   }
   public static async findPlaces(
     queryObject,
+    popOptions = {},
     data: object = {}
   ): Promise<IPlace[] | null> {
     const searchableFields = ["name", "lat", "lan"];
     const features = new APIFeatures(
-      PlaceModel.find({ ...data, deletedAt: null }),
+      PlaceModel.find({ ...data, deletedAt: null }).populate(popOptions),
       queryObject
     )
       .filter()
