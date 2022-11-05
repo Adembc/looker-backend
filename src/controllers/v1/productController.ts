@@ -99,7 +99,7 @@ export const deleteProduct: RequestHandler = catchAsync(
 );
 export const updateProductState: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { product, place, isAvailble } = req.body;
+    const { product, place, isAvailable } = req.body;
     const [isProductExist, isPlaceExist] = await Promise.all([
       ProductRepository.findProductByObject({ _id: product }),
       PlaceRepository.findPlaceByObject({ _id: place }),
@@ -113,12 +113,12 @@ export const updateProductState: RequestHandler = catchAsync(
     await PlaceproductRepository.updateProductplaceState(
       product,
       place,
-      isAvailble
+      isAvailable
     );
     res.status(200).json({
       product,
       place,
-      isAvailble,
+      isAvailable,
     });
   }
 );

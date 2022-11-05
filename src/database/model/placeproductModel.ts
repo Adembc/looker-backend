@@ -8,7 +8,7 @@ export const COLLECTION_NAME = "place-product";
 export default interface IPlaceproduct extends Document {
   place: Types.ObjectId;
   product: Types.ObjectId;
-  isAvailble: boolean;
+  isAvailable: boolean;
   deletedAt?: Date;
 }
 
@@ -22,7 +22,7 @@ const schema = new Schema(
       type: mongoose.Types.ObjectId,
       ref: Place,
     },
-    isAvailble: {
+    isAvailable: {
       type: Boolean,
       default: true,
     },

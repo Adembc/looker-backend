@@ -4,8 +4,7 @@ import IPlace, { PlaceModel, STATUS } from "../model/placeModel";
 import { COLLECTION_NAME as Image } from "../model/imageModel";
 import { COLLECTION_NAME as Category } from "../model/categoryModel";
 import { COLLECTION_NAME as Product } from "../model/productModel";
-import { COLLECTION_NAME as Placeproduct } from "../model/placeProductModel";
-
+import { COLLECTION_NAME as Placeproduct } from "../model/placeproductModel";
 export default class PlaceRepository {
   public static async createPlace(data: object): Promise<IPlace | null> {
     return await PlaceModel.create(data);
@@ -71,7 +70,7 @@ export default class PlaceRepository {
         $lookup: {
           from: Category,
           as: "category",
-          let: { categoryId: "$category" },
+          let: { categoryId: "$category", placeId: "$_id" },
           pipeline: [
             {
               $match: {
@@ -87,7 +86,7 @@ export default class PlaceRepository {
               $lookup: {
                 from: Product,
                 as: "products",
-                let: { products: "$products" },
+                let: { products: "$products", placeId: "$$placeId" },
                 pipeline: [
                   {
                     $match: {
@@ -109,18 +108,18 @@ export default class PlaceRepository {
                         $filter: {
                           input: "$check",
                           as: "item",
-                          cond: { $eq: ["$$item.place", "$_id"] },
+                          cond: { $eq: ["$$item.place", "$$placeId"] },
                         },
                       },
                     },
                   },
                   {
                     $addFields: {
-                      isAvailble: {
+                      isAvailable: {
                         $cond: {
                           if: { $gt: [{ $size: "$items" }, 0] },
-                          then: "aaa",
-                          else: "unkwown",
+                          then: { $first: "$items.isAvailable" },
+                          else: "unknown",
                         },
                       },
                     },

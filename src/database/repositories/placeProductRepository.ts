@@ -1,15 +1,15 @@
 import { Types } from "mongoose";
-import IPlaceproduct, { PlaceproductModel } from "../model/placeProductModel";
+import IPlaceproduct, { PlaceproductModel } from "../model/placeproductModel";
 
 export default class PlaceproductRepository {
   public static async updateProductplaceState(
     product: Types.ObjectId,
     place: Types.ObjectId,
-    isAvailble: boolean
+    isAvailable: boolean
   ) {
     return await PlaceproductModel.findOneAndUpdate(
       { product, place },
-      { product, place, isAvailble },
+      { product, place, isAvailable },
       { new: true, upsert: true }
     );
   }
