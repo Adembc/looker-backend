@@ -4,6 +4,8 @@ import HttpError from "../../helper/HttpError";
 import { Types } from "mongoose";
 import ProductRepository from "../../database/repositories/productRepository";
 import IProduct from "../../database/model/productModel";
+import PlaceRepository from "../../database/repositories/placeRepository";
+import PlaceproductRepository from "../../database/repositories/placeProductRepository";
 
 export const getProducts: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -93,5 +95,30 @@ export const deleteProduct: RequestHandler = catchAsync(
         new HttpError(`can't delete product with this ID : ${id}`, 404)
       );
     res.status(204).json({});
+  }
+);
+export const updateProductState: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { product, place, isAvailble } = req.body;
+    const [isProductExist, isPlaceExist] = await Promise.all([
+      ProductRepository.findProductByObject({ _id: product }),
+      PlaceRepository.findPlaceByObject({ _id: place }),
+    ]);
+    if (!isProductExist)
+      return next(
+        new HttpError(`product not found with this id ${product}`, 404)
+      );
+    if (!isPlaceExist)
+      return next(new HttpError(`place not found with this id ${place}`, 404));
+    await PlaceproductRepository.updateProductplaceState(
+      product,
+      place,
+      isAvailble
+    );
+    res.status(200).json({
+      product,
+      place,
+      isAvailble,
+    });
   }
 );

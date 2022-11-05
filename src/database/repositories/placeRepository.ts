@@ -1,6 +1,10 @@
 import { Types } from "mongoose";
 import APIFeatures from "../../helper/ApiFeatures";
-import IPlace, { PlaceModel } from "../model/placeModel";
+import IPlace, { PlaceModel, STATUS } from "../model/placeModel";
+import { COLLECTION_NAME as Image } from "../model/imageModel";
+import { COLLECTION_NAME as Category } from "../model/categoryModel";
+import { COLLECTION_NAME as Product } from "../model/productModel";
+import { COLLECTION_NAME as Placeproduct } from "../model/placeProductModel";
 
 export default class PlaceRepository {
   public static async createPlace(data: object): Promise<IPlace | null> {
@@ -44,5 +48,98 @@ export default class PlaceRepository {
     filter: object
   ): Promise<IPlace | null> {
     return await PlaceModel.findOne({ ...filter, deletedAt: null });
+  }
+  public static async findPlaceForUser(
+    filter: object
+  ): Promise<IPlace[] | null> {
+    return await PlaceModel.aggregate([
+      {
+        $match: {
+          deletedAt: null,
+          status: STATUS.ACCEPTED,
+        },
+      },
+      {
+        $lookup: {
+          from: Image,
+          localField: "slides",
+          foreignField: "_id",
+          as: "slides",
+        },
+      },
+      {
+        $lookup: {
+          from: Category,
+          as: "category",
+          let: { categoryId: "$category" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$_id", "$$categoryId"] },
+                    { $lte: ["$deletedAt", null] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: Product,
+                as: "products",
+                let: { products: "$products" },
+                pipeline: [
+                  {
+                    $match: {
+                      deletedAt: null,
+                      $expr: { $in: ["$_id", "$$products"] },
+                    },
+                  },
+                  {
+                    $lookup: {
+                      from: Placeproduct,
+                      as: "check",
+                      localField: "_id",
+                      foreignField: "product",
+                    },
+                  },
+                  {
+                    $addFields: {
+                      items: {
+                        $filter: {
+                          input: "$check",
+                          as: "item",
+                          cond: { $eq: ["$$item.place", "$_id"] },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    $addFields: {
+                      isAvailble: {
+                        $cond: {
+                          if: { $gt: [{ $size: "$items" }, 0] },
+                          then: "aaa",
+                          else: "unkwown",
+                        },
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      check: 0,
+                      items: 0,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+    ]);
   }
 }

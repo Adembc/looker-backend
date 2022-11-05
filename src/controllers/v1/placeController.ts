@@ -7,6 +7,17 @@ import IPlace, { STATUS } from "../../database/model/placeModel";
 import CategoryRepository from "../../database/repositories/categoryRepository";
 import { ImageModel } from "../../database/model/imageModel";
 
+export const getUserPlaces: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await PlaceRepository.findPlaceForUser(req.query);
+    res.status(200).json({
+      results: data.length,
+      payload: {
+        places: data,
+      },
+    });
+  }
+);
 export const getPlaces: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const data = await PlaceRepository.findPlaces(req.query, {
@@ -116,12 +127,3 @@ export const deletePlace: RequestHandler = catchAsync(
     res.status(204).json({});
   }
 );
-
-export const onlyAccepted: RequestHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  req.query.status = STATUS.ACCEPTED.toString();
-  next();
-};

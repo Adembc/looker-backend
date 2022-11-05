@@ -16,3 +16,8 @@ export const updatePlaceSchema = Joi.object({
   slides: Joi.array().items(JoiObjectId()),
   status: Joi.number().min(1).max(3),
 }).min(1);
+export const productPlace = Joi.object({
+  product: JoiObjectId().required(),
+  place: JoiObjectId().required(),
+  isAvailable: Joi.boolean(),
+}).min(1);
