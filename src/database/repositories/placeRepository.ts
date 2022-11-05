@@ -119,7 +119,7 @@ export default class PlaceRepository {
                         $cond: {
                           if: { $gt: [{ $size: "$items" }, 0] },
                           then: { $first: "$items.isAvailable" },
-                          else: "unknown",
+                          else: null,
                         },
                       },
                     },
