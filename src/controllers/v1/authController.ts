@@ -20,7 +20,7 @@ export const register: RequestHandler = catchAsync(
       "+verified +completed"
     );
     if (existingUser) {
-      return next(new HttpError("user already exist ! please login", 400));
+      return next(new HttpError("email already exists", 400));
     }
 
     const createdUser = await UserRepository.createUser({

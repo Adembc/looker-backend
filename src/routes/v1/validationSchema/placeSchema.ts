@@ -14,4 +14,5 @@ export const updatePlaceSchema = Joi.object({
   lan: Joi.number(),
   category: JoiObjectId(),
   slides: Joi.array().items(JoiObjectId()),
+  status: Joi.number().min(1).max(3),
 }).min(1);

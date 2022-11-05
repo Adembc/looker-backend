@@ -15,7 +15,7 @@ export default interface IPlace extends Document {
   lat: number;
   lan: number;
   category: Types.ObjectId;
-  addedBy: Types.ObjectId;
+  // addedBy: Types.ObjectId;
   status: STATUS;
   slides: Types.ObjectId[];
   createdAt?: Date;
@@ -35,7 +35,7 @@ const schema = new Schema(
       enum: [STATUS.REJECTED, STATUS.IN_REVIEW, STATUS.ACCEPTED],
       default: STATUS.IN_REVIEW,
     },
-    addedBy: { type: mongoose.Types.ObjectId, ref: "User" },
+    // addedBy: { type: mongoose.Types.ObjectId, ref: "User" },
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",

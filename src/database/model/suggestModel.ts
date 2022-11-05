@@ -3,9 +3,15 @@ import { model, Schema, Document, Types } from "mongoose";
 export const DOCUMENT_NAME = "Suggest";
 export const COLLECTION_NAME = "suggests";
 
+export enum SUGGEST_TYPE {
+  "PLACE" = 1,
+  "CATEGORY" = 2,
+  "PRODUCT" = 3,
+}
+
 export default interface ISuggest extends Document {
   type: number;
-  data: { name: string; category };
+  data: string;
   deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -13,11 +19,12 @@ export default interface ISuggest extends Document {
 
 const schema = new Schema(
   {
-    name: {
-      type: String,
-      default: "",
+    type: {
+      type: Number,
+      enum: [SUGGEST_TYPE.PLACE, SUGGEST_TYPE.CATEGORY, SUGGEST_TYPE.PRODUCT],
+      default: SUGGEST_TYPE.PLACE,
     },
-    img: {
+    data: {
       type: String,
     },
     deletedAt: {

@@ -3,7 +3,7 @@ import catchAsync from "../../helper/catchAsync";
 import HttpError from "../../helper/HttpError";
 import { Types } from "mongoose";
 import PlaceRepository from "../../database/repositories/placeRepository";
-import IPlace from "../../database/model/placeModel";
+import IPlace, { STATUS } from "../../database/model/placeModel";
 import CategoryRepository from "../../database/repositories/categoryRepository";
 import { ImageModel } from "../../database/model/imageModel";
 
@@ -24,7 +24,6 @@ export const getPlaces: RequestHandler = catchAsync(
 export const createPlace: RequestHandler = catchAsync(
   async (req, res: Response, next: NextFunction) => {
     const { name, category, lat, lan } = req.body;
-
     const isCategoryExist = await CategoryRepository.findCategoryByObject({
       _id: category,
     });
@@ -36,6 +35,7 @@ export const createPlace: RequestHandler = catchAsync(
     const isExist = await PlaceRepository.findPlaceByObject({
       lat,
       lan,
+      status: STATUS.ACCEPTED,
     });
     if (isExist) return next(new HttpError("this place is already exist", 400));
     const slides: string[] = [];
@@ -48,6 +48,7 @@ export const createPlace: RequestHandler = catchAsync(
     const doc = await PlaceRepository.createPlace({
       ...req.body,
       slides,
+      ...(req.originalUrl.includes("admin") && { status: STATUS.ACCEPTED }),
       name: name.toLowerCase(),
       [req?.file?.fieldname]: req?.file?.path,
     } as IPlace);
@@ -115,9 +116,12 @@ export const deletePlace: RequestHandler = catchAsync(
     res.status(204).json({});
   }
 );
-export const suggestPlace: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
-    const { _id: userId } = req.user;
-    // const { lat, lan, name, catego };
-  }
-);
+
+export const onlyAccepted: RequestHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  req.query.status = STATUS.ACCEPTED.toString();
+  next();
+};

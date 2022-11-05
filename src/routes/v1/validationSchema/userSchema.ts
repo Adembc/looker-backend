@@ -5,7 +5,7 @@ import {
 } from "../../../middleware/SchemaValidator";
 
 const createUserValidateSchema = Joi.object({
-  password: Joi.string().required(),
+  password: Joi.string().min(8).required(),
   passwordConfirm: Joi.ref("password"),
   email: Joi.string().email(),
   phone: checkValidPhone(),
@@ -44,10 +44,6 @@ const updateUserPswValidateSchema = Joi.object({
   currentPassword: Joi.string().required(),
   password: Joi.string().required().min(8),
   passwordConfirm: Joi.ref("password"),
-});
-
-const userById = Joi.object({
-  id: JoiObjectId().required(),
 });
 
 const loginUser = Joi.object({
@@ -100,7 +96,6 @@ export default {
   registerUser: registerUserValidateSchema,
   putUser: updateUserValidateSchema,
   updatePsw: updateUserPswValidateSchema,
-  userById,
   loginUser,
   userToken,
   userCredential,
