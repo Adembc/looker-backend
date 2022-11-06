@@ -163,7 +163,12 @@ export default class PlaceRepository {
           $or: searchFilter,
         },
       },
-      {},
+      {
+        $addFields: {
+          distance: 10,
+        },
+      },
+      { $sort: { distance: 1 } },
     ]);
   }
 }
