@@ -1,13 +1,14 @@
-import { NextFunction, RequestHandler, Response, Request } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 import catchAsync from "../../helper/catchAsync";
 import HttpError from "../../helper/HttpError";
 import { Types } from "mongoose";
 import CategoryRepository from "../../database/repositories/categoryRepository";
 import ICategory from "../../database/model/categoryModel";
 import ProductRepository from "../../database/repositories/productRepository";
+import { ProtectedRequest } from "../../types/ProtectedRequest";
 
 export const getCategories: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const data = await CategoryRepository.findCategories(req.query);
     res.status(200).json({
       results: data.length,
@@ -19,7 +20,7 @@ export const getCategories: RequestHandler = catchAsync(
 );
 
 export const createCategory: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { name, products } = req.body;
     const isExist = await CategoryRepository.findCategoryByObject({
       name: name.toLowerCase(),
@@ -60,7 +61,7 @@ export const createCategory: RequestHandler = catchAsync(
 );
 
 export const updateCategory: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { name, products } = req.body;
 
@@ -109,7 +110,7 @@ export const updateCategory: RequestHandler = catchAsync(
 );
 
 export const deleteCategory: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const doc = await CategoryRepository.deleteCategoryById(
       new Types.ObjectId(id)

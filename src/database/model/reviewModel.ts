@@ -1,4 +1,6 @@
-import { model, Schema, Document, Types } from "mongoose";
+import mongoose, { model, Schema, Document, Types } from "mongoose";
+import { DOCUMENT_NAME as User } from "./userModel";
+import { DOCUMENT_NAME as Place } from "./placeModel";
 
 export const DOCUMENT_NAME = "Review";
 export const COLLECTION_NAME = "reviews";
@@ -15,13 +17,10 @@ export default interface IReview extends Document {
 
 const schema = new Schema(
   {
-    name: {
-      type: String,
-      default: "",
-    },
-    img: {
-      type: String,
-    },
+    user: { type: mongoose.Types.ObjectId, ref: User },
+    place: { type: mongoose.Types.ObjectId, ref: Place },
+    amount: { type: Number },
+    comment: { type: String, trim: true },
     deletedAt: {
       type: Date,
       select: false,

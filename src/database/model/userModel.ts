@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 import { NextFunction } from "express";
 import { mongoosePagination, Pagination } from "mongoose-paginate-ts";
 
-export default interface user extends Document {
+export const DOCUMENT_NAME = "User";
+export const COLLECTION_NAME = "users";
+
+export default interface IUser extends Document {
   firstName: string;
   lastName: string;
   email?: string;
@@ -27,7 +30,7 @@ export default interface user extends Document {
   changedPasswordAfter: (a: number) => {};
 }
 const Schema = mongoose.Schema;
-const userSchema = new Schema<user>(
+const schema = new Schema<IUser>(
   {
     firstName: { type: String, trim: true, min: 3 },
     lastName: { type: String, trim: true, min: 3 },
@@ -48,13 +51,13 @@ const userSchema = new Schema<user>(
   { timestamps: true, versionKey: false }
 );
 // hashing password before store it to database
-userSchema.pre("save", async function (next): Promise<void> {
+schema.pre("save", async function (next): Promise<void> {
   // crypt password
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
 });
 // save password changed at
-userSchema.pre("save", function (next: NextFunction) {
+schema.pre("save", function (next: NextFunction) {
   if (
     !this.isModified("password") ||
     this.isNew ||
@@ -66,13 +69,13 @@ userSchema.pre("save", function (next: NextFunction) {
   next();
 });
 // check if password correct
-userSchema.methods.isCorrectPassword = async function (
+schema.methods.isCorrectPassword = async function (
   psw1: string,
   psw2: string
 ): Promise<boolean> {
   return await bcrypt.compare(psw1, psw2);
 };
-userSchema.methods.generateToken = function (
+schema.methods.generateToken = function (
   id: string,
   secert: string,
   expire: string
@@ -81,9 +84,7 @@ userSchema.methods.generateToken = function (
     expiresIn: expire,
   });
 };
-userSchema.methods.changedPasswordAfter = function (
-  JWTTimestamp: number
-): boolean {
+schema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {
   if (this.passwordChangedAt) {
     const jwtMillSec = JWTTimestamp * 1000;
     const pswChangeMillSec = this.passwordChangedAt.getTime();
@@ -92,13 +93,14 @@ userSchema.methods.changedPasswordAfter = function (
   //false means does not change
   return false;
 };
-userSchema.pre(/^find/, function (next: NextFunction) {
+schema.pre(/^find/, function (next: NextFunction) {
   this.find({ deletedAt: null });
   next();
 });
 
-userSchema.plugin(mongoosePagination);
-export const User: Pagination<user> = mongoose.model<user, Pagination<user>>(
-  "User",
-  userSchema
+schema.plugin(mongoosePagination);
+export const User: Pagination<IUser> = mongoose.model<IUser, Pagination<IUser>>(
+  DOCUMENT_NAME,
+  schema,
+  COLLECTION_NAME
 );

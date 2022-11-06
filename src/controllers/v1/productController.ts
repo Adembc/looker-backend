@@ -1,4 +1,4 @@
-import { NextFunction, RequestHandler, Response, Request } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 import catchAsync from "../../helper/catchAsync";
 import HttpError from "../../helper/HttpError";
 import { Types } from "mongoose";
@@ -6,9 +6,10 @@ import ProductRepository from "../../database/repositories/productRepository";
 import IProduct from "../../database/model/productModel";
 import PlaceRepository from "../../database/repositories/placeRepository";
 import PlaceproductRepository from "../../database/repositories/placeProductRepository";
+import { ProtectedRequest } from "../../types/ProtectedRequest";
 
 export const getProducts: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const data = await ProductRepository.findProducts(req.query);
     res.status(200).json({
       results: data.length,
@@ -20,7 +21,7 @@ export const getProducts: RequestHandler = catchAsync(
 );
 
 export const createProduct: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { name } = req.body;
 
     const isExist = await ProductRepository.findProductByObject({
@@ -49,7 +50,7 @@ export const createProduct: RequestHandler = catchAsync(
 );
 
 export const updateProduct: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { name } = req.body;
 
@@ -85,7 +86,7 @@ export const updateProduct: RequestHandler = catchAsync(
 );
 
 export const deleteProduct: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const doc = await ProductRepository.deleteProductById(
       new Types.ObjectId(id)
@@ -98,7 +99,7 @@ export const deleteProduct: RequestHandler = catchAsync(
   }
 );
 export const updateProductState: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { product, place, isAvailable } = req.body;
     const [isProductExist, isPlaceExist] = await Promise.all([
       ProductRepository.findProductByObject({ _id: product }),

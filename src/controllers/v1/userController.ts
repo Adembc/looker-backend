@@ -1,4 +1,4 @@
-import { NextFunction, RequestHandler, Response, Request } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 import catchAsync from "../../helper/catchAsync";
 import HttpError from "../../helper/HttpError";
 import UserRepository from "../../database/repositories/userRepository";
@@ -7,9 +7,10 @@ import user, { User } from "../../database/model/userModel";
 import { Types } from "mongoose";
 import filePath from "../../helper/filePath";
 import { deleteFile } from "../../helper/deleteFile";
+import { ProtectedRequest } from "../../types/ProtectedRequest";
 
 export const getUsers: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const data = await UserRepository.paginate(
       req.query,
       "-verifCode -verifCodeExpires"
@@ -24,7 +25,7 @@ export const getUsers: RequestHandler = catchAsync(
 );
 
 export const createUser: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { email, phone } = req.body;
     const identifier = phone || email;
     const existingUser = await UserRepository.findUserByObject({
@@ -62,7 +63,7 @@ export const createUser: RequestHandler = catchAsync(
 );
 
 export const getUser: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const doc = await UserRepository.findUserById(new Types.ObjectId(id));
     if (!doc)
@@ -80,7 +81,7 @@ export const getUser: RequestHandler = catchAsync(
 );
 
 export const updateUser: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { email, phone } = req.body;
     const identifier = phone || email;
@@ -98,7 +99,7 @@ export const updateUser: RequestHandler = catchAsync(
         UserRepository.findUserById,
         req.file.fieldname
       );
-    const doc = await UserRepository.updateUserById(id, {
+    const doc = await UserRepository.updateUserById(new Types.ObjectId(id), {
       ...req.body,
       [req?.file?.fieldname]: filePath(req?.file?.path),
     });
@@ -125,7 +126,7 @@ export const updateUser: RequestHandler = catchAsync(
 );
 
 export const deleteUser: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const doc = await UserRepository.updateUserById(new Types.ObjectId(id), {
       deletedAt: new Date(),
@@ -145,7 +146,7 @@ export const getMe = (req, res: Response, next: NextFunction) => {
 };
 
 export const updatePassword: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { currentPassword, password, passwordConfirm } = req.body;
     // 1) Get user from collection
     const user = await UserRepository.findUserById(req.user.id, "+password");
@@ -172,7 +173,7 @@ export const updatePassword: RequestHandler = catchAsync(
 );
 
 export const removeAvatar: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.user._id;
     if (!req.user.avatar)
       return next(new HttpError("you are already without avatar ", 400));
@@ -188,7 +189,7 @@ export const removeAvatar: RequestHandler = catchAsync(
   }
 );
 export const getUserProfile: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.user._id;
 
     return res.status(200).json({

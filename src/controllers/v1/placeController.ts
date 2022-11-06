@@ -1,4 +1,4 @@
-import { NextFunction, RequestHandler, Response, Request } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 import catchAsync from "../../helper/catchAsync";
 import HttpError from "../../helper/HttpError";
 import { Types } from "mongoose";
@@ -6,9 +6,10 @@ import PlaceRepository from "../../database/repositories/placeRepository";
 import IPlace, { STATUS } from "../../database/model/placeModel";
 import CategoryRepository from "../../database/repositories/categoryRepository";
 import { ImageModel } from "../../database/model/imageModel";
+import { ProtectedRequest } from "../../types/ProtectedRequest";
 
 export const getUserPlaces: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const data = await PlaceRepository.findPlaceForUser(req.query);
     res.status(200).json({
       results: data.length,
@@ -19,7 +20,7 @@ export const getUserPlaces: RequestHandler = catchAsync(
   }
 );
 export const getPlaces: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const data = await PlaceRepository.findPlaces(req.query, {
       path: "category",
     });
@@ -33,7 +34,7 @@ export const getPlaces: RequestHandler = catchAsync(
 );
 
 export const createPlace: RequestHandler = catchAsync(
-  async (req, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { name, category, lat, lan } = req.body;
     const isCategoryExist = await CategoryRepository.findCategoryByObject({
       _id: category,
@@ -82,7 +83,7 @@ export const createPlace: RequestHandler = catchAsync(
 );
 
 export const updatePlace: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { name } = req.body;
 
@@ -117,7 +118,7 @@ export const updatePlace: RequestHandler = catchAsync(
 );
 
 export const deletePlace: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const doc = await PlaceRepository.deletePlaceById(new Types.ObjectId(id));
     if (!doc)

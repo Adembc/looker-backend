@@ -29,9 +29,37 @@ export default class ReviewRepository {
     place: Types.ObjectId,
     user: Types.ObjectId
   ): Promise<IReview[] | null> {
+    console.log(user);
     return await ReviewModel.aggregate([
       {
-        $match: { deletedAt: null },
+        $match: { place },
+      },
+      {
+        $addFields: {
+          isUser: {
+            $cond: {
+              if: { $eq: ["$user", user] },
+              then: true,
+              else: false,
+            },
+          },
+        },
+      },
+      { $sort: { isUser: -1, createdAt: -1 } },
+      {
+        $group: {
+          _id: "$place",
+          total: { $sum: "$amount" },
+          count: { $sum: 1 },
+          reviews: { $push: "$$ROOT" }, //keep the original document
+        },
+      },
+      {
+        $project: {
+          avg: { $round: [{ $divide: ["$total", "$count"] }, 1] },
+          count: 1,
+          reviews: 1,
+        },
       },
     ]);
   }
