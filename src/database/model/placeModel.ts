@@ -12,6 +12,7 @@ export enum STATUS {
 
 export default interface IPlace extends Document {
   name: string;
+  description: string;
   lat: number;
   lan: number;
   category: Types.ObjectId;
@@ -25,6 +26,10 @@ export default interface IPlace extends Document {
 const schema = new Schema(
   {
     name: {
+      type: String,
+      default: "",
+    },
+    description: {
       type: String,
       default: "",
     },

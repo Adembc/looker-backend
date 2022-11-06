@@ -1,4 +1,6 @@
 import { PaginationModel } from "mongoose-paginate-ts";
+import IAdmin from "../database/model/adminModel";
+import IUser from "../database/model/userModel";
 
 const groupBy = (arr, key: string) => {
   // group by id
@@ -31,7 +33,7 @@ type Option = {
 };
 
 function paginateData(
-  data: PaginationModel<any>,
+  data: PaginationModel<IUser | IAdmin>,
   options: Option
 ): returnedData {
   const doc = options.parentName

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { AggregationCursor, PipelineStage, Types } from "mongoose";
 import APIFeatures from "../../helper/ApiFeatures";
 import IPlace, { PlaceModel, STATUS } from "../model/placeModel";
 import { COLLECTION_NAME as Image } from "../model/imageModel";
@@ -9,6 +9,7 @@ import {
   generateCategoryFilter,
   generateSearchFilter,
 } from "../../helper/search";
+import calculateDistance from "../../helper/calculateDistance";
 export default class PlaceRepository {
   public static async createPlace(data: object): Promise<IPlace | null> {
     return await PlaceModel.create(data);
@@ -62,14 +63,7 @@ export default class PlaceRepository {
     const { lat, lan, category, search, isAvailable } = filter;
     const categories = generateCategoryFilter(category);
     const searchFilter = generateSearchFilter(search, isAvailable || null);
-    console.log({
-      lat,
-      lan,
-      categories,
-      searchFilter,
-      isAvailable,
-    });
-    return await PlaceModel.aggregate([
+    const aggregationArray: PipelineStage[] = [
       {
         $match: {
           deletedAt: null,
@@ -163,12 +157,15 @@ export default class PlaceRepository {
           $or: searchFilter,
         },
       },
-      {
+    ];
+    if (lan && lat) {
+      aggregationArray.push({
         $addFields: {
-          distance: 10,
+          distance: calculateDistance(lat, lan),
         },
-      },
-      { $sort: { distance: 1 } },
-    ]);
+      });
+      aggregationArray.push({ $sort: { distance: 1 } });
+    }
+    return await PlaceModel.aggregate(aggregationArray);
   }
 }

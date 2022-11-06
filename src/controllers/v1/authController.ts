@@ -7,7 +7,6 @@ import UserRepository from "../../database/repositories/userRepository";
 import TokenRepository from "../../database/repositories/tokenRepository";
 import { TokenInterface } from "../../types/token";
 import { Types } from "mongoose";
-import filePath from "../../helper/filePath";
 
 export const register: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -29,7 +28,7 @@ export const register: RequestHandler = catchAsync(
       firstName,
       lastName,
       password,
-      [req?.file?.fieldname]: filePath(req?.file?.path),
+      [req?.file?.fieldname]: req?.file?.path,
     } as user);
     if (!createdUser) {
       return next(new HttpError("Could not register this user", 500));

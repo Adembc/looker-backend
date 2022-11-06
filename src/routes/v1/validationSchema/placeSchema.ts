@@ -3,6 +3,7 @@ import { JoiObjectId } from "../../../middleware/SchemaValidator";
 
 export const createPlaceSchema = Joi.object({
   name: Joi.string().min(1).required(),
+  description: Joi.string(),
   lat: Joi.number().required(),
   lan: Joi.number().required(),
   category: JoiObjectId().required(),
@@ -11,6 +12,7 @@ export const createPlaceSchema = Joi.object({
 export const updatePlaceSchema = Joi.object({
   name: Joi.string().min(1),
   lat: Joi.number(),
+  description: Joi.string(),
   lan: Joi.number(),
   category: JoiObjectId(),
   slides: Joi.array().items(JoiObjectId()),

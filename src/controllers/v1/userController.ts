@@ -5,8 +5,6 @@ import UserRepository from "../../database/repositories/userRepository";
 import paginateData from "../../helper/paginateData";
 import user, { User } from "../../database/model/userModel";
 import { Types } from "mongoose";
-import filePath from "../../helper/filePath";
-import { deleteFile } from "../../helper/deleteFile";
 import { ProtectedRequest } from "../../types/ProtectedRequest";
 
 export const getUsers: RequestHandler = catchAsync(
@@ -38,7 +36,7 @@ export const createUser: RequestHandler = catchAsync(
 
     const doc = await UserRepository.createUser({
       ...req.body,
-      [req?.file?.fieldname]: filePath(req?.file?.path),
+      [req?.file?.fieldname]: req?.file?.path,
     } as user);
     if (!doc)
       return next(new HttpError(`can't create this user ! try later :( `, 500));
@@ -93,15 +91,9 @@ export const updateUser: RequestHandler = catchAsync(
         return next(new HttpError("this identifier is already exist", 400));
     }
 
-    req.file &&
-      deleteFile(
-        new Types.ObjectId(id),
-        UserRepository.findUserById,
-        req.file.fieldname
-      );
     const doc = await UserRepository.updateUserById(new Types.ObjectId(id), {
       ...req.body,
-      [req?.file?.fieldname]: filePath(req?.file?.path),
+      [req?.file?.fieldname]: req?.file.path,
     });
     if (!doc)
       return next(new HttpError("can not update user with id : " + id, 400));
@@ -177,7 +169,6 @@ export const removeAvatar: RequestHandler = catchAsync(
     const userId = req.user._id;
     if (!req.user.avatar)
       return next(new HttpError("you are already without avatar ", 400));
-    deleteFile(null, null, null, req.user.avatar);
     const user = await UserRepository.updateUserById(userId, { avatar: null });
     if (!user)
       return next(new HttpError("can not remove avatar try later", 500));

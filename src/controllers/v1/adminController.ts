@@ -31,7 +31,6 @@ export const createAdmin: RequestHandler = catchAsync(
         new HttpError(`can't create this admin ! try later :( `, 500)
       );
     doc.password = undefined;
-    doc.verifTry = undefined;
     res.status(201).json({
       code: 201,
       status: "success",
