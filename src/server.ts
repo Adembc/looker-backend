@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import terminate from "./helper/terminate";
+import http from "http";
+import socketio, { Socket } from "socket.io";
+import socketJob from "./socket/index";
 
 dotenv.config({ path: `${__dirname}/../config.env` });
 import app from "./app";
-// export const server2 = http.createServer(app);
+export const server2 = http.createServer(app);
 
-// server2.listen(5000, () => {
-//   console.log("server 2 running");
-// });
+server2.listen(6001, () => {
+  console.log("server 2 running on port 6001");
+});
 
 // connect database
 const DB = process.env.DATABASE.replace(
@@ -30,16 +33,20 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}... ON ${process.env.NODE_ENV} MODE`);
 });
-// const io = socketio(server2, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST", "OPTIONS"],
-//     allowRequest: (req, callback) => {
-//       const noOriginHeader = req.headers.origin === undefined;
-//       callback(null, noOriginHeader);
-//     },
-//   },
-// });
+//@ts-ignore
+const io = socketio(server2, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowRequest: (req, callback) => {
+      const noOriginHeader = req.headers.origin === undefined;
+      callback(null, noOriginHeader);
+    },
+  },
+});
+io.on("connection", (socket: Socket) => {
+  socketJob(socket, io);
+});
 
 // error handling
 // process.on("unhandledRejection", (err: { name: string; message: string }) => {

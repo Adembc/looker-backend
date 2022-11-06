@@ -1,6 +1,6 @@
 import { Query } from "mongoose";
 
-type options = { sort: string; fields: string; search: any };
+type options = { sort: string; fields: string; search: string };
 
 class APIFeatures {
   mongoseQuery: Query<any, any>;
@@ -11,14 +11,7 @@ class APIFeatures {
   }
   filter() {
     const queryObj = { ...this.queryObject };
-    const excludedFields = [
-      "limit",
-      "sort",
-      "page",
-      "fields",
-      "grouped",
-      "search",
-    ];
+    const excludedFields = ["limit", "sort", "page", "fields", "search"];
     excludedFields.forEach((ele) => delete queryObj[ele]);
     let queryStr = JSON.stringify(queryObj);
 
