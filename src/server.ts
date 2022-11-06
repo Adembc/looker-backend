@@ -33,6 +33,12 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}... ON ${process.env.NODE_ENV} MODE`);
 });
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
 //@ts-ignore
 const io = socketio(server2, {
   cors: {
