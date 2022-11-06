@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import IReview, { ReviewModel } from "../model/reviewModel";
+import { COLLECTION_NAME as User } from "../model/userModel";
 
 export default class ReviewRepository {
   public static async addReview(data: object): Promise<IReview | null> {
@@ -46,6 +47,15 @@ export default class ReviewRepository {
         },
       },
       { $sort: { isUser: -1, createdAt: -1 } },
+      {
+        $lookup: {
+          from: User,
+          as: "user",
+          localField: "user",
+          foreignField: "_id",
+        },
+      },
+
       {
         $group: {
           _id: "$place",

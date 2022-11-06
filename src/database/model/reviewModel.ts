@@ -20,7 +20,7 @@ const schema = new Schema(
     user: { type: mongoose.Types.ObjectId, ref: User },
     place: { type: mongoose.Types.ObjectId, ref: Place },
     amount: { type: Number },
-    comment: { type: String, trim: true },
+    comment: { type: String, trim: true, default: "" },
     deletedAt: {
       type: Date,
       select: false,

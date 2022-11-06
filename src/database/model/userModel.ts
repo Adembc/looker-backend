@@ -13,11 +13,6 @@ export default interface IUser extends Document {
   email?: string;
   phone?: string;
   password: string;
-  verifCode?: string;
-  verifCodeExpires?: Date;
-  verified: boolean;
-  verifTry?: number;
-  completed?: boolean;
   passwordChangedAt?: Date;
   avatar: string;
   createdAt?: Date;
@@ -40,11 +35,6 @@ const schema = new Schema<IUser>(
     avatar: {
       type: String,
     },
-    verifCode: { type: String },
-    verifCodeExpires: { type: Date },
-
-    verifTry: { type: Number, default: 5, select: false },
-    verified: { type: Boolean, default: false, select: false },
     passwordChangedAt: Date,
     deletedAt: { type: Date, select: false },
   },

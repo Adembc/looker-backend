@@ -5,6 +5,10 @@ import { COLLECTION_NAME as Image } from "../model/imageModel";
 import { COLLECTION_NAME as Category } from "../model/categoryModel";
 import { COLLECTION_NAME as Product } from "../model/productModel";
 import { COLLECTION_NAME as Placeproduct } from "../model/placeproductModel";
+import {
+  generateCategoryFilter,
+  generateSearchFilter,
+} from "../../helper/search";
 export default class PlaceRepository {
   public static async createPlace(data: object): Promise<IPlace | null> {
     return await PlaceModel.create(data);
@@ -48,14 +52,29 @@ export default class PlaceRepository {
   ): Promise<IPlace | null> {
     return await PlaceModel.findOne({ ...filter, deletedAt: null });
   }
-  public static async findPlaceForUser(
-    filter: object
-  ): Promise<IPlace[] | null> {
+  public static async findPlaceForUser(filter: {
+    lat?: number;
+    lan?: number;
+    category?: string;
+    search?: string;
+    isAvailable?: string;
+  }): Promise<IPlace[] | null> {
+    const { lat, lan, category, search, isAvailable } = filter;
+    const categories = generateCategoryFilter(category);
+    const searchFilter = generateSearchFilter(search, isAvailable || null);
+    console.log({
+      lat,
+      lan,
+      categories,
+      searchFilter,
+      isAvailable,
+    });
     return await PlaceModel.aggregate([
       {
         $match: {
           deletedAt: null,
           status: STATUS.ACCEPTED,
+          ...(categories && { category: { $in: categories } }),
         },
       },
       {
@@ -139,6 +158,12 @@ export default class PlaceRepository {
       {
         $unwind: "$category",
       },
+      {
+        $match: {
+          $or: searchFilter,
+        },
+      },
+      {},
     ]);
   }
 }

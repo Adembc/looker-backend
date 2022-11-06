@@ -9,13 +9,13 @@ export const getReviews: RequestHandler = catchAsync(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const { place } = req.params;
     const { _id: user } = req.user;
-    const data = await ReviewRepository.getReviews(
+    const [data] = await ReviewRepository.getReviews(
       new Types.ObjectId(place),
       user
     );
     res.status(200).json({
       payload: {
-        data,
+        data: data || null,
       },
     });
   }
@@ -37,7 +37,15 @@ export const reviewPlace: RequestHandler = catchAsync(
     });
     res.status(201).json({
       payload: {
-        review,
+        review: {
+          _id: review._id,
+          place,
+          user: req.user,
+          comment: review.comment,
+          amount: review.amount,
+          createdAt: review.createdAt,
+          updatedAt: review.updatedAt,
+        },
       },
     });
   }
@@ -56,7 +64,15 @@ export const updateReview: RequestHandler = catchAsync(
     if (!doc) return next(new HttpError("you should create review first", 400));
     return res.status(200).json({
       payload: {
-        doc,
+        review: {
+          _id: doc._id,
+          place,
+          user: req.user,
+          comment: doc.comment,
+          amount: doc.amount,
+          createdAt: doc.createdAt,
+          updatedAt: doc.updatedAt,
+        },
       },
     });
   }
