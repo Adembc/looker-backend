@@ -3,7 +3,7 @@ import { protect } from "../../../controllers/v1/authController";
 import { suggestEdit } from "../../../controllers/v1/suggestController";
 import SchemaValidator from "../../../middleware/SchemaValidator";
 import uploadMedia from "../../../middleware/uploadMedia";
-import { suggestEditSchema } from "./suggestSchema";
+import { suggestEditSchema } from "../validationSchema/suggestSchema";
 
 const router = Router();
 router.use(protect);

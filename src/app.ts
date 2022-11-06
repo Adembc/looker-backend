@@ -13,7 +13,7 @@ import errorHandler from "./helper/errorHandler";
 import HttpError from "./helper/HttpError";
 const app = express();
 // midllewares
-app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +27,7 @@ app.use(express.static("./"));
 app.use("/api/v1", adminV1Route);
 app.use("/api/v1", userV1Route);
 
-app.all("*", (req, res, next) => {
+app.use("*", (req, res, next) => {
   next(new HttpError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 // global handler error middleware

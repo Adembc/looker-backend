@@ -6,7 +6,7 @@ export const DOCUMENT_NAME = "Room";
 export const COLLECTION_NAME = "rooms";
 
 export default interface IRoom extends Document {
-  user: Types.ObjectId[];
+  users: Types.ObjectId[];
   category: Types.ObjectId;
   deletedAt?: Date;
   createdAt?: Date;
