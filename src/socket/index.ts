@@ -24,7 +24,7 @@ export default function (socket: Socket, io) {
     //   user: data?.user,
     //   room: data.roomId,
     //   content: data.msg,
-    // });
+    // }) ;
   });
 
   //   socket.on("leave-room", (data) => {
