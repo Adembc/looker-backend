@@ -7,11 +7,11 @@ import socketJob from "./socket/index";
 
 dotenv.config({ path: `${__dirname}/../config.env` });
 import app from "./app";
-//  const server2 = http.createServer(app);
+const server2 = http.createServer(app);
 
-// server2.listen(6001, () => {
-//   console.log("server 2 running on port 6001");
-// });
+server2.listen(6001, () => {
+  console.log("server 2 running on port 6001");
+});
 
 // connect database
 const DB = process.env.DATABASE.replace(
