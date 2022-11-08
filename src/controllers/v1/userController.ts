@@ -182,13 +182,16 @@ export const removeAvatar: RequestHandler = catchAsync(
 export const getUserProfile: RequestHandler = catchAsync(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.user._id;
-
     return res.status(200).json({
       code: 200,
       status: "success",
       payload: {
         user: {
-          userId,
+          _id: userId,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          email: req.user.email,
+          avatar: req.user.avatar,
         },
       },
     });
