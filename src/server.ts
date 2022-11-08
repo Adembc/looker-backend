@@ -40,19 +40,19 @@ app.use(function (req, res, next) {
 });
 
 //@ts-ignore
-// const io = socketio(server2, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST", "OPTIONS"],
-//     allowRequest: (req, callback) => {
-//       const noOriginHeader = req.headers.origin === undefined;
-//       callback(null, noOriginHeader);
-//     },
-//   },
-// });
-// io.on("connection", (socket: Socket) => {
-//   socketJob(socket, io);
-// });
+const io = socketio(server2, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowRequest: (req, callback) => {
+      const noOriginHeader = req.headers.origin === undefined;
+      callback(null, noOriginHeader);
+    },
+  },
+});
+io.on("connection", (socket: Socket) => {
+  socketJob(socket, io);
+});
 
 // error handling
 // process.on("unhandledRejection", (err: { name: string; message: string }) => {
