@@ -13,7 +13,6 @@ export function generateSearchFilter(
   search: string,
   isAvailable: string = null
 ) {
-  console.log(isAvailable === null);
   if (!search) return [{ deletedAt: null }];
   const searchableFields = [
     { field: "name", type: "string" },
