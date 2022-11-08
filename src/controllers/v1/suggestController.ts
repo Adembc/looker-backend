@@ -26,7 +26,9 @@ export const suggestEdit: RequestHandler = catchAsync(
 
 export const getSuggestions: RequestHandler = catchAsync(
   async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    console.log("it working");
     const suggestions = await SuggestRepository.findSuggestions(req.query);
+    console.log({ suggestions });
     res.status(200).json({
       payload: {
         suggestions,
