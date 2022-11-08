@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import terminate from "./helper/terminate";
 import http from "http";
 import socketio, { Socket } from "socket.io";
 import socketJob from "./socket/index";
@@ -55,19 +54,10 @@ io.on("connection", (socket: Socket) => {
 });
 
 // error handling
-// process.on("unhandledRejection", (err: { name: string; message: string }) => {
-//   console.log("UNHANDLED REJECTION! Shutting down...");
-//   console.log(err.name, err.message);
-//   server.close(() => {
-//     process.exit(1);
-//   });
-// });
-const exitHandler = terminate(server, {
-  coredump: false,
-  timeout: 500,
+process.on("unhandledRejection", (err: { name: string; message: string }) => {
+  console.log("UNHANDLED REJECTION! Shutting down...");
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
-
-process.on("uncaughtException", exitHandler(1, "Unexpected Error"));
-process.on("unhandledRejection", exitHandler(1, "Unhandled Promise"));
-process.on("SIGTERM", exitHandler(0, "SIGTERM"));
-process.on("SIGINT", exitHandler(0, "SIGINT"));
